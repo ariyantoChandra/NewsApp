@@ -28,12 +28,9 @@ class News
     private Writer $author;
     private Media $media;
     private City $city;
-    private $category;
+    private string $category;
     private int $view_count = 0;
     private int $like_count = 0;
-    private int $dislike_count = 0;
-    private int $comment_count = 0;
-    private array $comments = [];
     private array $tags = [];
     private float $rating = 0.0;
     private string $created_at;
@@ -50,7 +47,7 @@ class News
     #region GETTERS
     public function getId(): int
     {
-        return isset($this->id) ? $this->id : 0;
+        return $this->id;
     }
 
     public function getTitle(): string
@@ -83,7 +80,7 @@ class News
         return $this->city;
     }
 
-    public function getCategory()
+    public function getCategory(): string
     {
         return $this->category;
     }
@@ -96,18 +93,6 @@ class News
     public function getLikeCount(): int
     {
         return $this->like_count;
-    }
-    public function getDislikeCount(): int
-    {
-        return $this->dislike_count;
-    }
-    public function getCommentCount(): int 
-    { 
-        return $this->comment_count; 
-    }
-    public function getComments(): array 
-    { 
-        return $this->comments; 
     }
 
     public function getTags(): array
@@ -135,7 +120,6 @@ class News
     }
 
     #region SETTERS
-    
     public function setId(int $id): self
     {
         if ($id <= 0) {
@@ -200,8 +184,11 @@ class News
         return $this;
     }
 
-    public function setCategory($category): self
+    public function setCategory(string $category): self
     {
+        if (trim($category) === '') {
+            throw new Exception("News category cannot be empty");
+        }
         $this->category = $category;
         return $this;
     }
@@ -223,26 +210,6 @@ class News
         $this->like_count = $like_count;
         return $this;
     }
-    public function setDislikeCount(int $dislike_count): self
-    {
-        if ($dislike_count < 0) {
-            throw new Exception("News Dislike count cannot be negative");
-        }
-        $this->dislike_count = $dislike_count;
-        return $this;
-    }
-
-    public function setCommentCount(int $comment_count): self {
-        if ($comment_count < 0) throw new Exception("Comment count cannot be negative");
-        $this->comment_count = $comment_count;
-        return $this;
-    }
-
-    public function setComments(array $comments): self {
-        $this->comments = $comments;
-        return $this;
-    }
-
 
     public function setTags(array $tags): self
     {
@@ -305,17 +272,14 @@ class News
     public function toArray(): array
     {
         return [
-            'id' => isset($this->id) ? $this->id : 0,
+            'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
             'content' => $this->content,
             'images' => $this->images,
-            'category' => is_object($this->category) ? $this->category->toArray() : $this->category,
+            'category' => $this->category,
             'view_count' => $this->view_count,
             'like_count' => $this->like_count,
-            'dislike_count' => $this->dislike_count,
-            'comment_count' => $this->comment_count,
-            'comments' => $this->comments,
             'rating' => $this->rating,
             'tags' => $this->tags,
             'author' => $this->author->toArray(),

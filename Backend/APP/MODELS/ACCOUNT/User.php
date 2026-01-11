@@ -5,13 +5,12 @@ namespace MODELS\ACCOUNT;
 #region REQUIRE
 require_once(__DIR__ . "/Account.php");
 require_once(__DIR__ . "/../GEOGRAPHY/Country.php");
-//tabel user tidak ada current_user
-//require_once(__DIR__ . "/../CORE/Geolocation.php");
+require_once(__DIR__ . "/../CORE/Geolocation.php");
 #endregion
 
 #region USE
 use MODELS\ACCOUNT\Account;
-///use MODELS\CORE\Geolocation;
+use MODELS\CORE\Geolocation;
 use MODELS\GEOGRAPHY\Country;
 use Exception;
 #endregion
@@ -23,7 +22,7 @@ class User extends Account
     private string $phone_number;
     private string $gender;
     private string $biography;
-    //private Geolocation $current_location;
+    private Geolocation $current_location;
     private Country $country;
     #endregion
 
@@ -55,10 +54,10 @@ class User extends Account
         return $this->biography;
     }
 
-    // public function getCurrentLocation(): Geolocation
-    // {
-    //     return $this->current_location;
-    // }
+    public function getCurrentLocation(): Geolocation
+    {
+        return $this->current_location;
+    }
 
     public function getCountry(): Country
     {
@@ -105,13 +104,13 @@ class User extends Account
         return $this;
     }
 
-    // public function setCurrentLocation(Geolocation $location): self
-    // {
-    //     if (!($location instanceof Geolocation))
-    //         throw new Exception("User current_location must be an instance of Geolocation");
-    //     $this->current_location = $location;
-    //     return $this;
-    // }
+    public function setCurrentLocation(Geolocation $location): self
+    {
+        if (!($location instanceof Geolocation))
+            throw new Exception("User current_location must be an instance of Geolocation");
+        $this->current_location = $location;
+        return $this;
+    }
 
     public function setCountry(Country $country): self
     {
@@ -130,7 +129,7 @@ class User extends Account
                 "phone_number" => $this->phone_number,
                 "gender" => $this->gender,
                 "biography" => $this->biography,
-                //"current_location" => $this->current_location->toArray(),
+                "current_location" => $this->current_location->toArray(),
                 "country" => $this->country->toArray()
             ]
         );

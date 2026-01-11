@@ -53,7 +53,6 @@ class RepoAccount
             a.role,
             a.is_active,
             a.locked_until,
-            a.profile_picture_ext,
 
             u.birthdate         AS user_birthdate,
             u.gender            AS user_gender,
@@ -158,7 +157,7 @@ class RepoAccount
                     fullname,
                     email,
                     role,
-                    profile_picture_ext
+                    profile_picture_address
                 )
                 VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -167,21 +166,14 @@ class RepoAccount
                 throw new Exception("Failed to prepare account insert");
             }
 
-            //tambah
-            $username = $account->getUsername();
-            $fullname = $account->getFullname();
-            $email = $account->getEmail();
-            $role = $account->getRole();
-            $picExt = $account->getProfilePictureExtension();
-
             $stmt->bind_param(
                 "ssssss",
-                $username,
+                $account->getUsername(),
                 $hashedPassword,
-                $fullname,
-                $email,
-                $role,
-                $picExt
+                $account->getFullname(),
+                $account->getEmail(),
+                $account->getRole(),
+                $account->getProfilePictureAddress()
             );
 
             if (!$stmt->execute()) {
@@ -212,9 +204,9 @@ class RepoAccount
                         gender,
                         phone_number,
                         biography,
-                        country_id
+                        profile_picture_ext
                     )
-                    VALUES (?, ?, ?, ?, ?, ?)";
+                    VALUES (?, ?, ?, ?, ?)";
 
             $stmt = $conn->prepare($sql);
 
@@ -228,22 +220,15 @@ class RepoAccount
             $phone = $user->getPhoneNumber();
             $biography = $user->getBiography();
             $profile_picture_ext = $user->getProfilePictureExtension();
-            //nambah country
-            $countryId = null;
-            if ($user->getCountry()) {
-                $countryId = $user->getCountry()->getId();
-            } else {
-                 throw new Exception("Country data is missing for user creation");
-            }
 
             $stmt->bind_param(
-                "sssssi",
+                "sssss",
                 $username,
                 $birthdate,
                 $gender,
                 $phone,
                 $biography,
-                $countryId
+                $profile_picture_ext
             );
 
             if (!$stmt->execute()) {
@@ -520,12 +505,6 @@ class RepoAccount
         $user->setFullname($row['fullname']);
         $user->setEmail($row['email']);
         $user->setRole($row['role']);
-        if (!empty($row['profile_picture_ext'])) {
-            $fullPath = IMAGE_DATABASE_ADDRESS . "USERS/" . $row['username'] . "." . $row['profile_picture_ext'];
-            $user->setProfilePictureAddress($fullPath);
-        } else {
-            $user->setProfilePictureAddress(IMAGE_DATABASE_ADDRESS . "default.png");
-        }
         $user->setBirthdate($row['user_birthdate']);
         $user->setGender(strtoupper($row['user_gender']));
         $user->setPhoneNumber($row['user_phone_number']);
@@ -573,12 +552,6 @@ class RepoAccount
         $writer->setFullname($row['fullname']);
         $writer->setEmail($row['email']);
         $writer->setRole($row['role']);
-       if (!empty($row['profile_picture_ext'])) {
-            $fullPath = IMAGE_DATABASE_ADDRESS . "WRITER/" . $row['username'] . "." . $row['profile_picture_ext'];
-            $writer->setProfilePictureAddress($fullPath); 
-        } else {
-            $writer->setProfilePictureAddress(IMAGE_DATABASE_ADDRESS . "default.png");
-        }
         $writer->setBiography($row['writer_biography']);
         $writer->setIsVerified((bool) $row['writer_is_verified']);
         $writer->setMedia($media);
