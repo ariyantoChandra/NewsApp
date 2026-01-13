@@ -1,13 +1,108 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>register</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Daftar Akun Baru</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">register</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  
+  <ion-item>
+    <ion-label position="floating">Fullname (Nama Lengkap):</ion-label>
+    <ion-input [(ngModel)]="regData.fullname"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Username:</ion-label>
+    <ion-input [(ngModel)]="regData.username"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Password:</ion-label>
+    <ion-input 
+      type="password" 
+      [(ngModel)]="regData.password"
+      placeholder="Minimal 8 karakter">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Konfirmasi Password:</ion-label>
+    <ion-input 
+      type="password" 
+      [(ngModel)]="confirmPassword"
+      placeholder="Ulangi password anda">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Email:</ion-label>
+    <ion-input 
+      type="email" 
+      [(ngModel)]="regData.email"
+      placeholder="email@example.com">
+    </ion-input>
+  </ion-item>
+
+  <ion-item id="open-date" button="true">
+    <ion-label position="floating">Tanggal Lahir</ion-label>
+    <ion-input [value]="regData.birthdate" readonly></ion-input>
+    <ion-icon name="calendar-outline" slot="end" class="ion-margin-top"></ion-icon>
+  </ion-item>
+
+  <ion-modal trigger="open-date" [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime 
+        presentation="date"
+        [showDefaultButtons]="true" 
+        doneText="Pilih"
+        cancelText="Batal"
+        [(ngModel)]="regData.birthdate"
+        (ionChange)="formatDate($event)">
+      </ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <ion-item>
+    <ion-label>Gender:</ion-label>
+    <ion-select [(ngModel)]="regData.gender">
+      <ion-select-option value="MALE">Laki-laki</ion-select-option>
+      <ion-select-option value="FEMALE">Perempuan</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Biografi:</ion-label>
+    <ion-textarea [(ngModel)]="regData.biography"></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Negara:</ion-label>
+    <ion-select [(ngModel)]="regData.country_id" (ionChange)="onCountryChange($event)">
+      <ion-select-option *ngFor="let c of countries" [value]="c.id">
+        {{ c.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">No. HP</ion-label>
+    <div style="display: flex; align-items: center; width: 100%; margin-top: 5px;">
+      <span style="font-size: 16px; margin-right: 10px; min-width: 30px; text-align: center;">
+        {{ selectedPhonePrefix }}
+      </span>
+      <ion-input 
+        type="tel" 
+        [(ngModel)]="regData.phone_number" 
+        placeholder="812xx">
+      </ion-input>
+    </div>
+  </ion-item>
+
+  <div class="ion-margin-top">
+    <ion-button expand="block" (click)="onRegister()">DAFTAR SEKARANG</ion-button>
+  </div>
+
 </ion-content>

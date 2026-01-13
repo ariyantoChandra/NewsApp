@@ -19,13 +19,12 @@ class Account
     protected string $fullname;
     protected string $email;
     protected string $role;
-    protected string $profile_picture_address;
+    protected string $profile_picture_address = "";
     #endregion
 
     #region CONSTRUCTOR
     public function __construct()
-    {
-    }
+    {}
     #endregion
 
     #region GETTER
@@ -110,13 +109,13 @@ class Account
         $this->role = $role;
     }
 
-    public function setProfilePictureAddress(string $address)
+    public function setProfilePictureAddress(?string $address)
     {
-        $address = trim($address);
-
-        if ($address === '') {
-            throw new Exception("Account Profile picture address cannot be empty");
-        }
+        //$address = trim($address);
+        $address = trim($address ?? "");
+        // if ($address === '') {
+        //     throw new Exception("Account Profile picture address cannot be empty");
+        // }
 
         $this->profile_picture_address = $address;
     }

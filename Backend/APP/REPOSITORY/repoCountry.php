@@ -33,13 +33,10 @@ class RepoCountry
         try {
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
-
             if (!$stmt) {
                 throw new Exception("Failed to prepare country fetch statement: " . $conn->error);
             }
-
             $stmt->bind_param("i", $id);
-
             if ($stmt->execute()) {
                 $result = $stmt->get_result();
                 if ($row = $result->fetch_assoc()) {
@@ -57,6 +54,33 @@ class RepoCountry
         } finally {
             if ($stmt) $stmt->close();
             if ($conn) $conn->close();
+        }
+    }
+    public function findAllCountries(): array
+    {
+        $sql = "SELECT id, name, code, telephone FROM countries ORDER BY name ASC";
+        $countries = [];
+        try {
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    $countries[] = [
+                        'id' => (int)$row['id'],
+                        'name' => $row['name'],
+                        'code' => $row['code'],
+                        'telephone' => $row['telephone']
+                    ];
+                }
+            }
+            return $countries;
+        } catch (Exception $e) {
+            throw $e;
+        } finally {
+            if (isset($stmt)) $stmt->close();
+            if (isset($conn)) $conn->close();
         }
     }
     #endregion

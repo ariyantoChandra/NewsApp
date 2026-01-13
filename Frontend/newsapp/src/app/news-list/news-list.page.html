@@ -1,13 +1,38 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>news-list</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ pageTitle }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">news-list</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  
+  <div *ngIf="newsList.length === 0" class="ion-text-center ion-padding">
+    <p>Belum ada berita.</p>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let news of newsList" button [routerLink]="['/news-detail', news.id]">
+      <ion-thumbnail slot="start">
+        <img [src]="news.images && news.images.length ? news.images[0] : 'assets/images/placeholder.jpg'" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ news.title }}</h2>
+        <p>{{ news.created_at | date:'mediumDate' }}</p>
+        <p *ngIf="!isMyNewsMode">Oleh: {{ news.author.fullname }}</p>
+        <ion-chip *ngIf="isMyNewsMode" color="success" outline="true">
+           <ion-label>Status: Published</ion-label>
+        </ion-chip>
+      </ion-label>
+
+      <ion-buttons slot="end" *ngIf="isMyNewsMode">
+        <ion-button color="danger" (click)="confirmDelete(news.id, $event)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+
+    </ion-item>
+  </ion-list>
 </ion-content>

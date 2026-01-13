@@ -184,16 +184,6 @@ class RepoAccount
                 $picExt
             );
 
-            // $stmt->bind_param(
-            //     "ssssss",
-            //     $account->getUsername(),
-            //     $hashedPassword,
-            //     $account->getFullname(),
-            //     $account->getEmail(),
-            //     $account->getRole(),
-            //     $account->getProfilePictureExtension()
-            // );
-
             if (!$stmt->execute()) {
                 throw new Exception("Failed to create account: {$stmt->error}");
             }
@@ -583,11 +573,11 @@ class RepoAccount
         $writer->setFullname($row['fullname']);
         $writer->setEmail($row['email']);
         $writer->setRole($row['role']);
-        if (!empty($row['profile_picture_ext'])) {
+       if (!empty($row['profile_picture_ext'])) {
             $fullPath = IMAGE_DATABASE_ADDRESS . "WRITER/" . $row['username'] . "." . $row['profile_picture_ext'];
-            $user->setProfilePictureAddress($fullPath);
+            $writer->setProfilePictureAddress($fullPath); 
         } else {
-            $user->setProfilePictureAddress(IMAGE_DATABASE_ADDRESS . "default.png");
+            $writer->setProfilePictureAddress(IMAGE_DATABASE_ADDRESS . "default.png");
         }
         $writer->setBiography($row['writer_biography']);
         $writer->setIsVerified((bool) $row['writer_is_verified']);

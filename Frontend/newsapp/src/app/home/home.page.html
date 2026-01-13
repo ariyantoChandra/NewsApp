@@ -25,11 +25,22 @@
 
   <ion-card *ngIf="breakingNews" [routerLink]="['/news-detail', breakingNews.id]" class="breaking-card">
     <div class="card-image-container">
-      <img [src]="breakingNews.main_image" />
+      <img [src]="breakingNews.images.length > 0 ? breakingNews.images[0] : 'assets/images/placeholder.jpg'" />
+      
       <div class="card-overlay-content">
-        <ion-chip color="primary">{{ breakingNews.category_name }}</ion-chip>
+        <ion-chip color="primary">{{ breakingNews.category }}</ion-chip>
+        
         <h2>{{ breakingNews.title }}</h2>
-        <p>{{ breakingNews.author_name }} • {{ breakingNews.published_at | date:'mediumDate' }}</p>
+
+        <div class="tags-container" *ngIf="breakingNews.tags && breakingNews.tags.length > 0 && breakingNews.tags[0] !== ''">
+          <ion-badge color="light" *ngFor="let tag of breakingNews.tags" class="ion-margin-end">
+            #{{ tag }}
+          </ion-badge>
+        </div>
+
+        <p>
+          {{ breakingNews.author.fullname }} • {{ breakingNews.created_at | date:'mediumDate' }}
+        </p>
       </div>
     </div>
   </ion-card>
@@ -52,12 +63,22 @@
   <ion-list>
     <ion-item *ngFor="let news of recommendations" [routerLink]="['/news-detail', news.id]" lines="none" detail>
       <ion-thumbnail slot="start">
-        <img [src]="news.main_image">
+        <img [src]="news.images.length > 0 ? news.images[0] : 'assets/images/placeholder.jpg'">
       </ion-thumbnail>
       <ion-label>
-        <h3 class="ion-text-wrap">{{ news.title }}</h3>
-        <p>{{ news.author_name }}</p> 
-        <p style="font-size: 0.8rem;">{{ news.published_at | date:'mediumDate' }}</p>
+        <ion-note color="primary" style="font-size: 0.7rem;">{{ news.category }}</ion-note>
+
+        <h3 class="ion-text-wrap" style="font-weight: bold; margin-top: 2px;">{{ news.title }}</h3>
+
+        <div class="tags-container-list" *ngIf="news.tags && news.tags.length > 0 && news.tags[0] !== ''">
+           <span *ngFor="let tag of news.tags" style="color: #666; font-size: 0.7rem; margin-right: 5px;">#{{ tag }}</span>
+        </div>
+        
+        <p>{{ news.author.fullname }}</p> 
+        
+        <p style="font-size: 0.8rem;">
+          {{ news.created_at | date:'mediumDate' }}
+        </p>
         
         <p *ngIf="news.rating > 0; else noRating">
           <ion-icon name="star" color="warning"></ion-icon> {{ news.rating }}

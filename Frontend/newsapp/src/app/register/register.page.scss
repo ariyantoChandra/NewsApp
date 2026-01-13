@@ -1,0 +1,13 @@
+ion-input {
+  ::ng-deep input::placeholder {
+    font-size: 15px; 
+    font-weight: normal;
+    opacity: 0.6;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+}
+
+ion-input[type="tel"] {
+   margin-top: 10px; 
+}

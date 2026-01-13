@@ -110,7 +110,7 @@ class RepoNewsTag
             throw $e;
         } finally {
             if ($stmt) $stmt->close();
-            if ($conn) $conn->close();
+            // if ($conn) $conn->close();
         }
     }
     #endregion

@@ -161,7 +161,6 @@ class RepoMedia
     #endregion
 
     #region UPDATE
-#region UPDATE
     public function updateMedia(int $id, Media $media): bool
     {
         $sql = "UPDATE medias
@@ -358,7 +357,34 @@ class RepoMedia
             }
         }
     }
+    #endregion
 
+    #region SELECT
+    public function findAllMediaForSelection(): array
+    {
+        // Mengambil media yang aktif dan tidak terhapus
+        $sql = "SELECT id, name FROM medias ORDER BY name ASC";
+        
+        $medias = [];
+        try {
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            
+            $result = $stmt->get_result();
+            while ($row = $result->fetch_assoc()) {
+                $medias[] = [
+                    'id' => (int)$row['id'],
+                    'name' => $row['name']
+                ];
+            }
+            return $medias;
+        } catch (Exception $e) {
+            throw $e;
+        } finally {
+            if (isset($stmt)) $stmt->close();
+        }
+    }
     #endregion
 
     #region MAPPER

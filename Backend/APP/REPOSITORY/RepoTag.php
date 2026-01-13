@@ -70,14 +70,73 @@ class RepoTag
             if ($stmt) {
                 $stmt->close();
             }
-            if ($conn) {
-                $conn->close();
-            }
+            // if ($conn) {
+            //     $conn->close();
+            // }
         }
     }
     #endregion
 
     #region RETRIEVE
+    public function findTagIdByNameAndCategory(string $name, int $categoryId): ?int
+    {
+        $tagName = trim($name);
+        $sql = "SELECT id FROM tags WHERE name = ? AND category_id = ? LIMIT 1";
+
+        $conn = null;
+        $stmt = null;
+
+        try {
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+
+            $stmt->bind_param("si", $tagName, $categoryId);
+            $stmt->execute();
+            
+            $result = $stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                return (int)$row['id'];
+            }
+            return null;
+
+        } catch (Exception $e) {
+            throw $e;
+        } finally {
+            if ($stmt) {
+                $stmt->close();
+            }
+        }
+    }
+
+    public function getAllTags(): array
+    {
+        $sql = "SELECT id, category_id, name FROM tags ORDER BY category_id ASC, name ASC";
+        $conn = null;
+        $stmt = null;
+        $tags = [];
+
+        try {
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            while ($row = $result->fetch_assoc()) {
+                $tags[] = [
+                    'id' => (int)$row['id'],
+                    'category_id' => (int)$row['category_id'],
+                    'name' => $row['name']
+                ];
+            }
+            return $tags;
+        } catch (Exception $e) {
+            throw $e;
+        } finally {
+            if ($stmt) $stmt->close();
+            if ($conn) $conn->close();
+        }
+    }
+
     public function findTagByCategoryId(int $category_id): array
     {
         $sql = "
@@ -119,9 +178,9 @@ class RepoTag
             if ($stmt) {
                 $stmt->close();
             }
-            if ($conn) {
-                $conn->close();
-            }
+            // if ($conn) {
+            //     $conn->close();
+            // }
         }
     }
 

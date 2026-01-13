@@ -222,11 +222,11 @@ class Media
 
     public function createLogoAddressFromExt($ext)
     {
-        $this->logo_address = IMAGE_DATABASE_ADDRESS . "MEDIA/" . "LOGO/" . $this->getSlug() . $ext;
+        $this->logo_address = IMAGE_DATABASE_ADDRESS . "MEDIA/" . "LOGO/" . $this->getSlug() .".". $ext;
     }
     public function createPictureAddressFromExt($ext)
     {
-        $this->picture_address = IMAGE_DATABASE_ADDRESS . "MEDIA/" . "PICTURE/" . $this->getSlug() . $ext;
+        $this->picture_address = IMAGE_DATABASE_ADDRESS . "MEDIA/" . "PICTURE/" . $this->getSlug() .".". $ext;
     }
     #endregion
 }

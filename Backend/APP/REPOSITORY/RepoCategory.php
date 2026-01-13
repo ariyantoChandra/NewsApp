@@ -112,16 +112,22 @@ class RepoCategory
 
     public function findCategory(): array
     {
-        $sql = "SELECT `name`
-            FROM categories
-            ORDER BY ASC;";
+        $sql = "SELECT id, name FROM categories ORDER BY name ASC";
+        $categories = [];
         try {
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->execute();
 
             $result = $stmt->get_result();
-            return $result->fetch_assoc()['name'];
+            //return $result->fetch_assoc()['name'];
+            while ($row = $result->fetch_assoc()) {
+                $categories[] = [
+                    'id' => (int)$row['id'],
+                    'name' => $row['name']
+                ];
+            }
+            return $categories;
         } catch (Exception $e) {
             throw $e;
         } finally {

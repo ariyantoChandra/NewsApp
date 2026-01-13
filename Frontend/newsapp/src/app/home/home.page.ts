@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MOCK_CATEGORIES, MOCK_NEWS } from '../mock-data';
-import { News, Category } from '../interface';
+import { NewsAPI, Category } from '../interface';
+import { HttpService } from '../http-service';
+
+
 
 @Component({
   selector: 'app-home',
@@ -10,30 +12,44 @@ import { News, Category } from '../interface';
   standalone: false,
 })
 export class HomePage {
-  categories = MOCK_CATEGORIES;
-  breakingNews: News | undefined;
-  recommendations: News[] = [];
+  categories: Category[] = [];
+  breakingNews: NewsAPI | undefined;
+  recommendations: NewsAPI[] = [];
 
-  constructor(private router: Router) {}
-  ngOnInit() {
-    this.loadData();
+  constructor(private router: Router, private http: HttpService) {}
+  ngOnInit() {}
+  ionViewWillEnter() {
+    this.loadNews();
+    this.loadCategories();
   }
-  loadData() {
-    // 1. Ambil semua berita (Nanti ini diganti this.httpService.getAllNews())
-    const allNews = MOCK_NEWS;
+  loadCategories() {
+    this.http.get_categories().subscribe(
+      (res: any) => {
+        if (res.status === 'success') {
+          this.categories = res.data;
+        }
+      },
+      (err) => {
+        console.error('Gagal ambil kategori', err);
+      }
+    );
+  }
+  loadNews() {
+    this.http.get_news().subscribe(
+      (res: any) => {
+        if (res.status === 'success') {
+          const allNews: NewsAPI[] = res.data;
 
-    if (allNews.length > 0) {
-      // 2. Berita terbaru (ID 1 di SQL kamu yg 'Alexander') jadi Breaking News
-      // Note: Di SQL ID 1 tanggalnya paling lama, ID 7 paling baru.
-      // Kalau mau Breaking News itu yg "Paling Baru", pakai ID 7.
-      // Tapi kalau mau sesuai urutan insert, pakai index 0.
-
-      // Opsi A: Ambil item pertama array (ID 1)
-      this.breakingNews = allNews[0];
-
-      // 3. Sisanya jadi rekomendasi (ID 2 s/d 7)
-      this.recommendations = allNews.slice(1);
-    }
+          if (allNews.length > 0) {
+            this.breakingNews = allNews[0];
+            this.recommendations = allNews.slice(1);
+          }
+        }
+      },
+      (error) => {
+        console.error('Error fetching news:', error);
+      }
+    );
   }
   goToNewsList(categoryId: number, categoryName: string) {
     this.router.navigate(['/news-list', categoryId, categoryName]);

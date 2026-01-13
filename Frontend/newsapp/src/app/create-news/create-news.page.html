@@ -1,13 +1,43 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>create-news</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Buat Berita Baru</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">create-news</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Judul Berita</ion-label>
+    <ion-input [(ngModel)]="title"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Konten Berita</ion-label>
+    <ion-textarea rows="6" [(ngModel)]="content"></ion-textarea>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Kategori</ion-label>
+    <ion-select [(ngModel)]="categoryId" placeholder="Pilih Kategori">
+      <ion-select-option *ngFor="let cat of categories" [value]="cat.id">
+        {{ cat.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Tags (Pisahkan dengan koma)</ion-label>
+    <ion-input [(ngModel)]="tags" placeholder="Contoh: bola, liga inggris, sport"></ion-input>
+  </ion-item>
+
+  <div class="ion-margin-top">
+    <ion-label>Upload Gambar (Min 4)</ion-label>
+    <input type="file" multiple (change)="onFileChange($event)" accept="image/*" />
+  </div>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="submitNews()">
+    Publish Berita
+  </ion-button>
 </ion-content>
